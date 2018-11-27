@@ -20,6 +20,7 @@ let getMeta = (base_version) => {
 	return require(FHIRServer.resolveFromVersion(base_version, RESOURCES.META));};
 
 
+	
 /**
  *
  * @param {*} args
@@ -27,6 +28,39 @@ let getMeta = (base_version) => {
  * @param {*} logger
  */
 
+//  let buildSTu3SearchQuery=(args)=>{
+// 	let { base_version, _content, _format, _id, _lastUpdated, _profile, _query, _security, _tag } = args;
+
+// 	// Search Result params
+// 	let { _INCLUDE, _REVINCLUDE, _SORT, _COUNT, _SUMMARY, _ELEMENTS, _CONTAINED, _CONTAINEDTYPED } = args;
+
+// 	// Resource Specific params
+// 	let accession = args['accession'];
+// 	let basedon = args['basedon'];
+// 	let bodysite = args['bodysite'];
+// 	let _context = args['_context'];
+// 	let dicom_class = args['dicom-class'];
+// 	let endpoint = args['endpoint'];
+// 	let identifier = args['identifier'];
+// 	let modality = args['modality'];
+// 	let patient = args['patient'];
+// 	let performer = args['performer'];
+// 	let reason = args['reason'];
+// 	let series = args['series'];
+// 	let started = args['started'];
+// 	let study = args['study'];
+// 	let uid = args['uid'];
+
+// 	let query = {};
+// 	let ors = [];
+// 	if(patient){
+// 		query['patient.reference'] = stringQueryBuilder(patient);
+// 	}
+// 	if(accession){
+// 		query['accession.assigner.reference'] = stringQueryBuilder(accession);
+// 	}
+// 	return query;
+//  }
 module.exports.search = (args, context, logger) => new Promise((resolve, reject) => {
 	logger.info('ImagingStudy -not suport yet >>> search');
 
@@ -52,20 +86,50 @@ module.exports.search = (args, context, logger) => new Promise((resolve, reject)
 	let started = args['started'];
 	let study = args['study'];
 	let uid = args['uid'];
-
+	let query = {};
+	//let ors = [];
+	if(patient){
+		query['patient.reference'] = stringQueryBuilder(patient);
+	}
+	if(accession){
+		query['accession.assigner.reference'] = stringQueryBuilder(accession);
+	}
+	//return query;
 	// TODO: Build query from Parameters
-
+	//let query = {};
+	//query = buildStu3SearchQuery(args);
 	// TODO: Query database
 
-	let ImagingStudy = getImagingStudy(base_version);
+	// let ImagingStudy = getImagingStudy(base_version);
 
-	// Cast all results to ImagingStudy Class
-	let imagingstudy_resource = new ImagingStudy();
-	// TODO: Set data with constructor or setter methods
-	imagingstudy_resource.id = 'test id';
+	// // Cast all results to ImagingStudy Class
+	// let imagingstudy_resource = new ImagingStudy();
+	// // TODO: Set data with constructor or setter methods
+	// imagingstudy_resource.id = 'test id';
+// Grab an instance of our DB and collection
+	// // Return Array
+	//resolve([imagingstudy_resource]);
+let db = globals.get(CLIENT_DB);
+let collection = db.collection(`${COLLECTION.IMAGINGSTUDY}_${base_version}`);
+let ImageStudy = getImagingStudy(base_version);
 
-	// Return Array
-	resolve([imagingstudy_resource]);
+// Query our collection for this observation
+collection.find(query, (err, data) => {
+	if (err) {
+		logger.error('Error with Patient.search: ', err);
+		return reject(err);
+	}
+
+	// Patient is a patient cursor, pull documents out before resolving
+	data.toArray().then((imagingstudys) => {
+		imagingstudys.forEach(function(element, i, returnArray) {
+			returnArray[i] = new ImageStudy(element);
+		});
+		resolve(imagingstudys);
+	});
+});
+
+
 });
 
 module.exports.searchById = (args, context, logger) => new Promise((resolve, reject) => {
@@ -338,14 +402,18 @@ module.exports.history = (args, context, logger) => new Promise((resolve, reject
 	// TODO: Build query from Parameters
 
 	// TODO: Query database
+	
 
-	let ImagingStudy = getImagingStudy(base_version);
+	// let ImagingStudy = getImagingStudy(base_version);
 
 	// Cast all results to ImagingStudy Class
 	let imagingstudy_resource = new ImagingStudy();
 
 	// Return Array
 	resolve([imagingstudy_resource]);
+
+
+
 });
 
 module.exports.historyById = (args, context, logger) => new Promise((resolve, reject) => {
