@@ -310,10 +310,10 @@ let fhirServerConfig = {
 		// 	service: './src/services/imagingmanifest/imagingmanifest.service.js',
 		// 	versions: [ VERSIONS['3_0_1'] ]
 		// },
-		// [RESOURCES.IMAGINGSTUDY]: {
-		// 	service: './src/services/imagingstudy/imagingstudy.service.js',
-		// 	versions: [ VERSIONS['3_0_1'] ]
-		// },
+		[RESOURCES.IMAGINGSTUDY]: {
+			service: './src/services/imagingstudy/imagingstudy.service.js',
+			versions: [ VERSIONS['3_0_1'] ]
+		},
 		// [RESOURCES.IMMUNIZATION]: {
 		// 	service: './src/services/immunization/immunization.service.js',
 		// 	versions: [ VERSIONS['3_0_1'] ]
